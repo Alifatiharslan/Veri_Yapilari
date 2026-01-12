@@ -2,6 +2,7 @@ Soru 1 (10p) – Min-Heap Trace (Insert + DeleteMin)
 
 Boş bir Min-Heap’e sırayla ekle: 12, 4, 18, 2, 9, 7
 
+Son heap’in array gösterimini yaz.
 
 1 kez DeleteMin sonrası array’i yaz.
 
