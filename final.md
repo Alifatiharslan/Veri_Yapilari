@@ -1,1 +1,1 @@
-selam aşkım
+printf("siber_vatan");
