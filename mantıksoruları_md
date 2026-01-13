@@ -1,0 +1,226 @@
+# ULTRA ZOR FİNAL – ALGORİTMALAR  
+## Heap • Hash Table • Graph  
+**Tam Çözümler (Kanıt + Trace + Analiz)**
+
+---
+
+## 1) Heap – İşlem Dizisi (Trace)
+
+**Min-Heap (0-index array)**  
+**Insert:** 40, 20, 35, 10, 25, 5, 30  
+**DeleteMin**  
+**Insert:** 15  
+**DeleteMin**
+
+### Adımlar
+
+- Insert 40  
+  `[40]`
+
+- Insert 20  
+  `[40, 20] → [20, 40]`
+
+- Insert 35  
+  `[20, 40, 35]`
+
+- Insert 10  
+  `[20, 40, 35, 10] → [20, 10, 35, 40] → [10, 20, 35, 40]`
+
+- Insert 25  
+  `[10, 20, 35, 40, 25]`
+
+- Insert 5  
+  `[10, 20, 35, 40, 25, 5]  
+   → [10, 20, 5, 40, 25, 35]  
+   → [5, 20, 10, 40, 25, 35]`
+
+- Insert 30  
+  `[5, 20, 10, 40, 25, 35, 30]`
+
+### DeleteMin
+- Kök(5) silinir, 30 köke alınır  
+  `[30, 20, 10, 40, 25, 35]  
+   → [10, 20, 30, 40, 25, 35]`
+
+### Insert 15
+- `[10, 20, 30, 40, 25, 35, 15]  
+   → [10, 20, 15, 40, 25, 35, 30]`
+
+### DeleteMin
+- Kök(10) silinir, 30 köke alınır  
+  `[30, 20, 15, 40, 25, 35]  
+   → [15, 20, 30, 40, 25, 35]`
+
+**Son Heap:**  
+`[15, 20, 30, 40, 25, 35]`
+
+**Açıklama:**  
+- Insert/DeleteMin sonrası *structure* (complete tree) korunur.  
+- Sadece *heap order* bozulur ve percolate ile düzeltilir.  
+- Heap sıralı değildir; yalnızca `parent ≤ children` garantisi verir.
+
+---
+
+## 2) Heap – DeleteMin En Kötü Swap Sayısı
+
+Heap yüksekliği `h` ise:
+- Kökten yaprağa kadar en fazla **1 swap / seviye**
+- **Maksimum swap = h**
+
+`h = ⌊log₂ N⌋` ⇒ en kötü durumda `⌊log₂ N⌋` swap.
+
+---
+
+## 3) Heap – “2. En Küçük” İspatı
+
+Min-Heap’te kök en küçüktür.  
+Kökün çocukları `L` ve `R` olsun.
+
+- Heap property: `root ≤ L` ve `root ≤ R`
+- L ve R’nin alt ağaçlarındaki her düğüm ≥ kendi kökü
+
+**Sonuç:**  
+Kök hariç tüm düğümler içinde minimum değer **`min(L, R)`**’dir.  
+➡️ **2. en küçük eleman, kökün çocuklarından biridir.**
+
+---
+
+## 4) Hash – Quadratic Probing (Hangisi Eklenemez?)
+
+- `M = 31` (asal)  
+- `h(x) = x % 31`  
+- Quadratic probing: `h + i² (mod M)`
+
+### A) 31, 62, 93, 124
+- Hepsi `0`’a hashlenir → 0, 1, 4, 9  
+**Eklenir**
+
+### B) 5, 36, 67, 98
+- Hepsi `5`’e hashlenir → 5, 6, 9, 14  
+**Eklenir**
+
+### C) 7, 38, 69, 100
+- Hepsi `7`’ye hashlenir → 7, 8, 11, 16  
+**Eklenir**
+
+**Sonuç:**  
+Verilen örneklerde **eklenemeyen yoktur**.  
+Tuzak: Quadratic Probing bazı M/λ koşullarında dolmadan yer bulamayabilir; burada o durum yok.
+
+---
+
+## 5) Rehashing – Amortized Analysis
+
+Tablo doldukça kapasite 2 katına çıkarılır.
+
+Taşınan eleman sayıları:
+1 + 2 + 4 + 8 + ... + N < 2N
+
+yaml
+Kodu kopyala
+
+**Toplam maliyet:** `O(N)`  
+➡️ Insert işleminin **amortized maliyeti O(1)** kabul edilir.
+
+---
+
+## 6) Graph – BFS (Ağırlıklar {0,1})
+
+BFS:
+- En az **kenar sayılı** yolu bulur.
+
+Eğer kenar ağırlıkları {0,1} ise:
+- Daha fazla kenarlı ama toplam ağırlığı daha küçük bir yol olabilir.
+- BFS bunu göz ardı eder.
+
+**Çözüm:**  
+- 0–1 BFS (deque) veya  
+- Dijkstra
+
+---
+
+## 7) DFS – Discovery & Finish Time ile Edge Türleri
+
+Zamanlar:
+- `d[u]`: discovery
+- `f[u]`: finish
+
+**Edge (u → v):**
+- **Tree / Forward:** `d[u] < d[v] < f[v] < f[u]`
+- **Back:** `d[v] < d[u] < f[u] < f[v]` → cycle var
+- **Cross:** Aralıklar ayrık
+
+---
+
+## 8) Topological Sort – Neden Birden Fazla Sonuç?
+
+Bir DAG’de bazı düğümler arasında zorunlu öncelik yoksa:
+- Birden fazla geçerli topological order oluşur.
+- Algoritma hatalı değildir.
+- Bu, grafın **partial order** olduğunu gösterir.
+
+---
+
+## 9) Dijkstra – Negatif Kenarda Neden Çöker?
+
+Varsayım:
+> “Extract-min yapılan düğümün mesafesi artık kesindir.”
+
+Negatif kenar örneği:
+- S→A = 2  
+- S→B = 5  
+- B→A = -10  
+
+Dijkstra A’yı 2 ile kesinler,  
+ama S→B→A = -5 daha kısadır.
+
+➡️ Varsayım bozulur → algoritma yanlış.
+
+---
+
+## 10) Prim vs Kruskal – Farklı MST, Aynı Toplam Ağırlık
+
+- Eşit ağırlıklı kenarlar varsa
+- Birden fazla MST mümkündür
+
+Prim düğüm büyütür, Kruskal kenar seçer.  
+Seçim sırası farklı → yapı farklı, **toplam ağırlık aynı**.
+
+---
+
+## 11) BFS Ağacı vs DFS Ağacı Yüksekliği
+
+- BFS: katman katman → genelde daha kısa
+- DFS: derine dalar → çok uzun olabilir
+
+**Sebep:**  
+Keşif stratejisi (Queue vs Stack), graf aynı olsa bile sonucu değiştirir.
+
+---
+
+## 12) Dijkstra – Heap Yerine Dizi Kullanılırsa
+
+| Yapı            | Extract-Min | Toplam Karmaşıklık |
+|-----------------|------------|--------------------|
+| Binary Heap     | O(log V)   | O((V+E) log V)     |
+| Sorted Array    | O(1)       | O(E·V)             |
+| Unsorted Array  | O(V)       | O(V² + E) ≈ O(V²) |
+
+---
+
+## 13) Heap + Hash + Graph Var Ama O(N²) Nasıl?
+
+Sebep veri yapıları değil, **bottleneck adım**:
+
+- İç içe döngüyle tüm düğümleri tekrar tekrar taramak
+- Yoğun graf (`E ≈ V²`)
+- Hash O(1) olsa bile yanlış yerde kullanmak
+
+➡️ En yavaş adım O(N²) ise tüm algoritma O(N²) olur.
+
+---
+
+## SONUÇ
+
+- Veri yapısı ≠ hızlı algoritma garantisi  
+- Analiz, varsayım ve ispat **finalin kilidi**
